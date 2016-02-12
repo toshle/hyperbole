@@ -22,29 +22,25 @@ test_tweets = [
 pos_tweets = [('I am so hungry I could eat a horse', 'hyperbole'),
               ('I have a million things to do', 'hyperbole'),
               ('I had to walk 15 miles to school in the snow, uphill', 'hyperbole'),
+              ('She is as heavy as an elephant', 'hyperbole'),
+              ('He is as fat as a whale', 'hyperbole'),
+              ('Like a god', 'hyperbole'),
+              ('They ran like greased lightning', 'hyperbole'),
+              ('My grandmother is as old as the hills', 'hyperbole'),
+              ('I am dying of shame', 'hyperbole'),
               ('I had a ton of homework', 'hyperbole'),
-              ('If I can’t buy that new game, I will die', 'hyperbole')]
+              ('If I can’t buy that new game I will die', 'hyperbole')]
 
 neg_tweets = [('I do not like this car', 'normal'),
               ('I like this car', 'normal'),
               ('This view is horrible', 'normal'),
               ('I feel tired this morning', 'normal'),
               ('I am not looking forward to the concert', 'normal'),
+              ('The door is black', 'normal'),
+              ('I love you', 'normal'),
               ('He is my enemy', 'normal')]
 
 tweets = pos_tweets + neg_tweets
-
-def grams_features(tweet):
-    features = {}
-    #porter = nltk.PorterStemmer()
-    tokens = nltk.word_tokenize(tweet)
-    tokens = [t.lower() for t in tokens] 
-    bigrams = nltk.bigrams(tokens)
-    bigrams = [tup[0]+' ' +tup[1] for tup in bigrams]
-    grams = tokens + bigrams
-    for t in grams:
-        features['contains(%s)' % t] = True
-    return features
 
 def get_words_in_tweets(tweets):
     all_words = []
@@ -57,6 +53,13 @@ def get_word_features(wordlist):
     word_features = wordlist.keys()
     return word_features
 
+def comparative_features(features):
+    features['contains(as a)'] = 1.0
+    features['contains(is as)'] = 1.0
+    features['contains(like a)'] = 1.0
+    features['contains(is so)'] = 1.0
+    return features
+
 def extract_features(document):
     features = {}
     #porter = nltk.PorterStemmer()
@@ -66,37 +69,39 @@ def extract_features(document):
     bigrams = [tup[0]+' ' +tup[1] for tup in bigrams]
     grams = tokens + bigrams
     for t in grams:
-        features['contains(%s)' % t] = True
+        if(len(t) > 2):
+            features['contains(%s)' % t] = 1.0
     return features
+
+def training_features(document):
+    return comparative_features(extract_features(document))
 
 #base = names + adjectives + nouns
 
 # word_features = get_word_features(get_words_in_tweets(tweets))
 
-training_set = nltk.classify.apply_features(extract_features, tweets)
+training_set = nltk.classify.apply_features(training_features, tweets)
 
-print(training_set)
+#print(training_set)
 
 classifier = nltk.NaiveBayesClassifier.train(training_set)
 
-#print(classifier.show_most_informative_features(32))
+print(classifier.show_most_informative_features(32))
 
-tweet = "Rosen is a human"
-print(grams_features(tweet))
-# nltk.download()
-print(classifier.classify(extract_features(tweet)))
+# tweet = "He is as fast as a cheetah"
+# print(grams_features(tweet))
+# # nltk.download()
+# print(classifier.classify(extract_features(tweet)))
 
-tweet2 = "Rosen is not a good guy"
-print(grams_features(tweet2))
+tweet2 = "Wash the dishes"
+print(extract_features(tweet2))
 # nltk.download()
 print(classifier.classify(extract_features(tweet2)))
-# print(nltk.pos_tag(tweet.split()))
+#print(nltk.pos_tag(tweet.split()))
 
 
 # hw_token = nltk.word_tokenize(tweet)
 # print(hw_token)
-
-
 
 
 # S   sentence                    the man walked
