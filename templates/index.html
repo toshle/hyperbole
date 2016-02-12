@@ -1,0 +1,28 @@
+<html>
+<head>
+  <title>Hyperbole</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" />
+</head>
+<body>
+  <div id="legend">
+    <h4>Info</h4>
+    <ul>
+      <li>Hyperboles are green</li>
+      <li>Normal tweets are white</li>
+      <li></li>
+      <li>I use Naive Bayes classifier from NLTK with ngram(bigram and unigram) word features</li>
+    </ul>
+  </div>
+  <div id="content">
+    <h2 id="title">Last {{ count }} tweets with #hyperbole hashtag</h2>
+    {% if tweets %}
+      {% for tweet in tweets %}
+        <div class="row {{ tweet[1] }}">
+          {{ tweet[0] }}
+        </div>
+      {% endfor %}
+    {% endif %}
+    <h4 id="footer">Created by Rosen Rachev</h4>
+  </div>
+</body>
+</html>
