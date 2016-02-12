@@ -12,4 +12,4 @@ Hyperbole sentiment analysis with python
 
 # Start
 * `python app.py`
-* Then http://127.0.0.1:5000/<number of tweets to retrieve>
+* Then http://127.0.0.1:5000/**number of tweets to retrieve**
